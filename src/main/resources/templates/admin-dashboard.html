@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#eff6ff",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-900 min-h-screen">
+    <nav class="bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <i class="fas fa-user-shield text-blue-400 text-xl mr-2"></i>
+            <span class="text-white font-semibold text-lg">Admin Panel</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-gray-300"
+              >Welcome,
+              <span class="text-white font-medium" th:text="${user.name}"></span
+            ></span>
+            <a
+              th:href="@{/logout}"
+              class="text-gray-300 hover:text-white transition duration-200 flex items-center"
+            >
+              <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+        <div
+          class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-lg px-6 py-4"
+        >
+          <h4 class="text-white text-xl font-semibold flex items-center">
+            <i class="fas fa-tachometer-alt mr-2"></i> Administrator Dashboard
+          </h4>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+              class="bg-gradient-to-br from-green-600 to-green-700 rounded-lg p-6 text-white transform hover:scale-105 transition duration-200 cursor-pointer shadow-lg"
+            >
+              <div class="text-center">
+                <i class="fas fa-users text-4xl mb-4 opacity-80"></i>
+                <h5 class="text-lg font-semibold mb-2">Manage Users</h5>
+                <p class="text-green-100 text-sm">
+                  View and manage all system users
+                </p>
+              </div>
+            </div>
+            <div
+              class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg p-6 text-white transform hover:scale-105 transition duration-200 cursor-pointer shadow-lg"
+            >
+              <div class="text-center">
+                <i class="fas fa-file-invoice text-4xl mb-4 opacity-80"></i>
+                <h5 class="text-lg font-semibold mb-2">Manage Bills</h5>
+                <p class="text-blue-100 text-sm">
+                  View and manage all billing records
+                </p>
+              </div>
+            </div>
+            <div
+              class="bg-gradient-to-br from-yellow-600 to-orange-600 rounded-lg p-6 text-white transform hover:scale-105 transition duration-200 cursor-pointer shadow-lg"
+            >
+              <div class="text-center">
+                <i class="fas fa-chart-bar text-4xl mb-4 opacity-80"></i>
+                <h5 class="text-lg font-semibold mb-2">Reports</h5>
+                <p class="text-yellow-100 text-sm">
+                  Generate system reports and analytics
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
