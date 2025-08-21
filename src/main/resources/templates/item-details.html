@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${item.name} + ' - Item Details'">Item Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#eff6ff",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-900 min-h-screen">
+    <nav class="bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <i class="fas fa-info-circle text-blue-400 text-xl mr-2"></i>
+            <span class="text-white font-semibold text-lg">Item Details</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a
+              th:href="@{/items/customer}"
+              class="text-gray-300 hover:text-white transition duration-200"
+            >
+              <i class="fas fa-arrow-left mr-1"></i> Back to Items
+            </a>
+            <span class="text-gray-300"
+              >Welcome,
+              <span class="text-white font-medium" th:text="${user.name}"></span
+            ></span>
+            <a
+              th:href="@{/logout}"
+              class="text-gray-300 hover:text-white transition duration-200 flex items-center"
+            >
+              <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          <!-- Product Image -->
+          <div
+            class="aspect-w-1 aspect-h-1 bg-gray-700 flex items-center justify-center lg:h-96"
+          >
+            <img
+              th:src="@{/images/product.jpg}"
+              th:alt="${item.name}"
+              class="w-full h-full object-cover object-center"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div
+              class="hidden w-full h-full items-center justify-center bg-gray-700"
+            >
+              <i class="fas fa-image text-6xl text-gray-500"></i>
+              <div class="ml-4 text-gray-400">
+                <div class="text-lg font-medium">No Image Available</div>
+                <div class="text-sm">Product image not found</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Information -->
+          <div class="p-8">
+            <!-- Breadcrumb -->
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+              <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                <li class="inline-flex items-center">
+                  <a
+                    th:href="@{/items/customer}"
+                    class="text-gray-400 hover:text-white transition-colors duration-200"
+                  >
+                    <i class="fas fa-shopping-bag mr-1"></i>
+                    Shop
+                  </a>
+                </li>
+                <li>
+                  <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-500 mx-2"></i>
+                    <span class="text-gray-300" th:text="${item.name}"></span>
+                  </div>
+                </li>
+              </ol>
+            </nav>
+
+            <!-- Item Code -->
+            <div class="text-sm text-gray-400 mb-2">
+              Item Code: <span th:text="${item.itemCode}"></span>
+            </div>
+
+            <!-- Item Name -->
+            <h1
+              class="text-3xl font-bold text-white mb-4"
+              th:text="${item.name}"
+            ></h1>
+
+            <!-- Price -->
+            <div class="text-4xl font-bold text-blue-400 mb-6">
+              $<span
+                th:text="${#numbers.formatDecimal(item.price, 1, 2)}"
+              ></span>
+            </div>
+
+            <!-- Stock Status -->
+            <div class="mb-6">
+              <div
+                th:if="${item.stockQuantity > 0}"
+                class="flex items-center text-green-400"
+              >
+                <i class="fas fa-check-circle mr-2"></i>
+                <span class="font-medium">In Stock</span>
+                <span class="text-gray-400 ml-2"
+                  >(<span th:text="${item.stockQuantity}"></span>
+                  available)</span
+                >
+              </div>
+              <div
+                th:if="${item.stockQuantity == 0}"
+                class="flex items-center text-red-400"
+              >
+                <i class="fas fa-times-circle mr-2"></i>
+                <span class="font-medium">Out of Stock</span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-8">
+              <h3 class="text-lg font-semibold text-white mb-3">Description</h3>
+              <div
+                th:if="${item.description}"
+                class="text-gray-300 leading-relaxed"
+                th:text="${item.description}"
+              ></div>
+              <div th:unless="${item.description}" class="text-gray-500 italic">
+                No description available for this item.
+              </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="border-t border-gray-700 pt-6">
+              <h3 class="text-lg font-semibold text-white mb-4">
+                Additional Information
+              </h3>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Item Code:</span>
+                  <span
+                    class="text-white font-medium"
+                    th:text="${item.itemCode}"
+                  ></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Status:</span>
+                  <span
+                    th:class="${item.status == T(com.springboot.project.entity.Item$ItemStatus).ACTIVE ? 'text-green-400' : 
+                                               item.status == T(com.springboot.project.entity.Item$ItemStatus).OUT_OF_STOCK ? 'text-red-400' : 
+                                               'text-gray-400'}"
+                    class="font-medium"
+                    th:text="${item.status}"
+                  ></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Available Quantity:</span>
+                  <span
+                    class="text-white font-medium"
+                    th:text="${item.stockQuantity}"
+                  ></span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Added On:</span>
+                  <span
+                    class="text-white font-medium"
+                    th:text="${#temporals.format(item.createdAt, 'MMMM dd, yyyy')}"
+                  ></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 space-y-3">
+              <div th:if="${item.stockQuantity > 0}" class="text-center">
+                <button
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 text-lg"
+                >
+                  <i class="fas fa-shopping-cart mr-2"></i>
+                  Contact Us to Purchase
+                </button>
+                <p class="text-gray-400 text-sm mt-2">
+                  <i class="fas fa-info-circle mr-1"></i>
+                  Contact our sales team to place your order
+                </p>
+              </div>
+
+              <div th:if="${item.stockQuantity == 0}" class="text-center">
+                <button
+                  disabled
+                  class="w-full bg-gray-600 text-gray-400 font-bold py-3 px-6 rounded-lg cursor-not-allowed text-lg"
+                >
+                  <i class="fas fa-times-circle mr-2"></i>
+                  Currently Unavailable
+                </button>
+                <p class="text-gray-400 text-sm mt-2">
+                  <i class="fas fa-bell mr-1"></i>
+                  This item is currently out of stock
+                </p>
+              </div>
+
+              <a
+                th:href="@{/items/customer}"
+                class="block w-full text-center bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
+              >
+                <i class="fas fa-arrow-left mr-2"></i>
+                Continue Shopping
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Information -->
+      <div class="mt-6 bg-gray-800 rounded-lg shadow-lg p-6">
+        <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+          <i class="fas fa-lightbulb text-yellow-400 mr-2"></i>
+          Shopping Information
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div class="p-4">
+            <i class="fas fa-truck text-blue-400 text-2xl mb-2"></i>
+            <div class="text-white font-medium">Fast Delivery</div>
+            <div class="text-gray-400 text-sm">Quick and reliable shipping</div>
+          </div>
+          <div class="p-4">
+            <i class="fas fa-shield-alt text-green-400 text-2xl mb-2"></i>
+            <div class="text-white font-medium">Quality Guaranteed</div>
+            <div class="text-gray-400 text-sm">100% authentic products</div>
+          </div>
+          <div class="p-4">
+            <i class="fas fa-headset text-purple-400 text-2xl mb-2"></i>
+            <div class="text-white font-medium">24/7 Support</div>
+            <div class="text-gray-400 text-sm">Always here to help</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

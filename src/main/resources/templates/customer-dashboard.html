@@ -64,15 +64,25 @@
           </h4>
         </div>
         <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <a
+              th:href="@{'/items/customer'}"
+              class="block bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg p-6 text-white transform hover:scale-105 transition duration-200 cursor-pointer shadow-lg"
+            >
+              <div class="text-center">
+                <i class="fas fa-shopping-bag text-4xl mb-4 opacity-80"></i>
+                <h5 class="text-lg font-semibold mb-2">Shop Items</h5>
+                <p class="text-blue-100 text-sm">Browse available products</p>
+              </div>
+            </a>
             <a
               href="/users/profile"
-              class="block bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg p-6 text-white transform hover:scale-105 transition duration-200 cursor-pointer shadow-lg"
+              class="block bg-gradient-to-br from-green-600 to-green-700 rounded-lg p-6 text-white transform hover:scale-105 transition duration-200 cursor-pointer shadow-lg"
             >
               <div class="text-center">
                 <i class="fas fa-user text-4xl mb-4 opacity-80"></i>
                 <h5 class="text-lg font-semibold mb-2">My Profile</h5>
-                <p class="text-blue-100 text-sm">
+                <p class="text-green-100 text-sm">
                   View and update your profile
                 </p>
               </div>

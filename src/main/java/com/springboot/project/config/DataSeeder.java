@@ -7,13 +7,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.springboot.project.entity.User;
+import com.springboot.project.entity.Item;
 import com.springboot.project.repository.UserRepository;
+import com.springboot.project.repository.ItemRepository;
+import java.math.BigDecimal;
 
 @Configuration
 public class DataSeeder {
 
     @Bean
     CommandLineRunner init(@Autowired UserRepository userRepository, 
+                          @Autowired ItemRepository itemRepository,
                           @Autowired PasswordEncoder passwordEncoder) {
         return args -> {
             // Check if users already exist
@@ -71,10 +75,80 @@ public class DataSeeder {
                 customer3.setType(User.userType.CUSTOMER);
                 userRepository.save(customer3);
 
-                System.out.println("Sample data seeded successfully!");
+                System.out.println("Sample users seeded successfully!");
                 System.out.println("Admin login: admin / admin123");
                 System.out.println("Staff login: staff / staff123");
                 System.out.println("Customer login: alice / customer123 or bob / customer123");
+            }
+
+            // Check if items already exist
+            if (itemRepository.count() == 0) {
+                // Create sample items
+                Item book1 = new Item();
+                book1.setName("The Great Gatsby");
+                book1.setDescription("A classic American novel by F. Scott Fitzgerald");
+                book1.setPrice(new BigDecimal("15.99"));
+                book1.setStockQuantity(25);
+                book1.setStatus(Item.ItemStatus.ACTIVE);
+                itemRepository.save(book1);
+
+                Item book2 = new Item();
+                book2.setName("To Kill a Mockingbird");
+                book2.setDescription("A gripping tale of racial injustice and childhood innocence by Harper Lee");
+                book2.setPrice(new BigDecimal("18.50"));
+                book2.setStockQuantity(30);
+                book2.setStatus(Item.ItemStatus.ACTIVE);
+                itemRepository.save(book2);
+
+                Item book3 = new Item();
+                book3.setName("1984");
+                book3.setDescription("George Orwell's dystopian masterpiece about totalitarian control");
+                book3.setPrice(new BigDecimal("14.75"));
+                book3.setStockQuantity(20);
+                book3.setStatus(Item.ItemStatus.ACTIVE);
+                itemRepository.save(book3);
+
+                Item book4 = new Item();
+                book4.setName("Pride and Prejudice");
+                book4.setDescription("Jane Austen's beloved romance novel");
+                book4.setPrice(new BigDecimal("16.99"));
+                book4.setStockQuantity(15);
+                book4.setStatus(Item.ItemStatus.ACTIVE);
+                itemRepository.save(book4);
+
+                Item book5 = new Item();
+                book5.setName("The Catcher in the Rye");
+                book5.setDescription("J.D. Salinger's coming-of-age story");
+                book5.setPrice(new BigDecimal("17.25"));
+                book5.setStockQuantity(0);
+                book5.setStatus(Item.ItemStatus.OUT_OF_STOCK);
+                itemRepository.save(book5);
+
+                Item book6 = new Item();
+                book6.setName("Lord of the Flies");
+                book6.setDescription("William Golding's tale of survival and human nature");
+                book6.setPrice(new BigDecimal("13.99"));
+                book6.setStockQuantity(5);
+                book6.setStatus(Item.ItemStatus.ACTIVE);
+                itemRepository.save(book6);
+
+                Item book7 = new Item();
+                book7.setName("Harry Potter and the Sorcerer's Stone");
+                book7.setDescription("The first book in J.K. Rowling's magical series");
+                book7.setPrice(new BigDecimal("22.99"));
+                book7.setStockQuantity(40);
+                book7.setStatus(Item.ItemStatus.ACTIVE);
+                itemRepository.save(book7);
+
+                Item book8 = new Item();
+                book8.setName("The Hobbit");
+                book8.setDescription("J.R.R. Tolkien's adventure story");
+                book8.setPrice(new BigDecimal("19.99"));
+                book8.setStockQuantity(12);
+                book8.setStatus(Item.ItemStatus.ACTIVE);
+                itemRepository.save(book8);
+
+                System.out.println("Sample items seeded successfully!");
             }
         };
     }

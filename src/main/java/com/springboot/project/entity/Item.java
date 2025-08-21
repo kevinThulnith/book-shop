@@ -33,7 +33,7 @@ public class Item {
     private BigDecimal price;
 
     @NotNull(message = "Stock quantity is required")
-    @Min(value = 1, message = "Stock quantity must be a positive number")
+    @Min(value = 0, message = "Stock quantity must be a non-negative number")
     @Column(name = "stock_quantity")
     private Integer stockQuantity = 0;
 
