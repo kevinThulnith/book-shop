@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${isOwnProfile} ? 'Edit Profile' : 'Edit User'">
+      Edit User
+    </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#eff6ff",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <i class="fas fa-user-edit text-blue-400 text-xl mr-2"></i>
+            <span
+              class="text-white font-semibold text-lg"
+              th:text="${isOwnProfile} ? 'Edit Profile' : 'Edit User'"
+              >Edit User</span
+            >
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-gray-300"
+              >Welcome,
+              <span
+                class="text-white font-medium"
+                th:text="${currentUser.name}"
+              ></span
+            ></span>
+            <a
+              href="/logout"
+              class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-200"
+            >
+              <i class="fas fa-sign-out-alt mr-1"></i>
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Back Button -->
+      <div class="mb-6">
+        <!-- Own Profile - Back to Dashboard -->
+        <a
+          th:if="${isOwnProfile and currentUser.type.name() == 'ADMIN'}"
+          href="/admin/dashboard"
+          class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          <span>Back to Dashboard</span>
+        </a>
+
+        <a
+          th:if="${isOwnProfile and currentUser.type.name() == 'STAFF'}"
+          href="/staff/dashboard"
+          class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          <span>Back to Dashboard</span>
+        </a>
+
+        <a
+          th:if="${isOwnProfile and currentUser.type.name() == 'CUSTOMER'}"
+          href="/customer/dashboard"
+          class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          <span>Back to Dashboard</span>
+        </a>
+
+        <!-- Editing Others - Back to User List -->
+        <a
+          th:if="${!isOwnProfile and currentUser.type.name() == 'ADMIN'}"
+          href="/users/admin/customers"
+          class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          <span>Back to User List</span>
+        </a>
+
+        <a
+          th:if="${!isOwnProfile and currentUser.type.name() == 'STAFF'}"
+          href="/users/staff/customers"
+          class="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          <span>Back to User List</span>
+        </a>
+      </div>
+
+      <!-- Success/Error Messages -->
+      <div
+        th:if="${success}"
+        class="mb-6 bg-green-800 border border-green-600 text-green-100 px-4 py-3 rounded-lg"
+      >
+        <i class="fas fa-check-circle mr-2"></i>
+        <span th:text="${success}"></span>
+      </div>
+
+      <div
+        th:if="${error}"
+        class="mb-6 bg-red-800 border border-red-600 text-red-100 px-4 py-3 rounded-lg"
+      >
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        <span th:text="${error}"></span>
+      </div>
+
+      <!-- Edit Form -->
+      <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+        <div class="px-6 py-4 border-b border-gray-700">
+          <h2 class="text-xl font-semibold text-white flex items-center">
+            <i class="fas fa-user-edit text-blue-400 mr-2"></i>
+            <span
+              th:text="${isOwnProfile} ? 'Edit Your Profile' : 'Edit User Information'"
+              >Edit User Information</span
+            >
+          </h2>
+        </div>
+
+        <div class="p-6">
+          <form
+            th:action="${isOwnProfile} ? @{/users/profile} : @{'/users/edit/' + ${user.accountNumber}}"
+            th:object="${user}"
+            method="post"
+            class="space-y-6"
+          >
+            <!-- Account Number (Read-only) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">
+                <i class="fas fa-hashtag mr-2"></i>Account Number
+              </label>
+              <input
+                type="text"
+                th:value="${user.accountNumber}"
+                readonly
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-400 cursor-not-allowed"
+              />
+            </div>
+
+            <!-- Name -->
+            <div>
+              <label
+                for="name"
+                class="block text-sm font-medium text-gray-300 mb-2"
+              >
+                <i class="fas fa-user mr-2"></i>Full Name *
+              </label>
+              <input
+                type="text"
+                id="name"
+                th:field="*{name}"
+                required
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter full name"
+              />
+              <div
+                th:if="${#fields.hasErrors('name')}"
+                class="mt-1 text-red-400 text-sm"
+              >
+                <i class="fas fa-exclamation-triangle mr-1"></i>
+                <span th:errors="*{name}"></span>
+              </div>
+            </div>
+
+            <!-- Username (Read-only) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">
+                <i class="fas fa-at mr-2"></i>Username
+              </label>
+              <input
+                type="text"
+                th:value="${user.username}"
+                readonly
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-400 cursor-not-allowed"
+              />
+              <p class="mt-1 text-xs text-gray-500">
+                Username cannot be changed
+              </p>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-300 mb-2"
+              >
+                <i class="fas fa-envelope mr-2"></i>Email Address *
+              </label>
+              <input
+                type="email"
+                id="email"
+                th:field="*{email}"
+                required
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter email address"
+              />
+              <div
+                th:if="${#fields.hasErrors('email')}"
+                class="mt-1 text-red-400 text-sm"
+              >
+                <i class="fas fa-exclamation-triangle mr-1"></i>
+                <span th:errors="*{email}"></span>
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div>
+              <label
+                for="address"
+                class="block text-sm font-medium text-gray-300 mb-2"
+              >
+                <i class="fas fa-map-marker-alt mr-2"></i>Address *
+              </label>
+              <textarea
+                id="address"
+                th:field="*{address}"
+                required
+                rows="3"
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter full address"
+              ></textarea>
+              <div
+                th:if="${#fields.hasErrors('address')}"
+                class="mt-1 text-red-400 text-sm"
+              >
+                <i class="fas fa-exclamation-triangle mr-1"></i>
+                <span th:errors="*{address}"></span>
+              </div>
+            </div>
+
+            <!-- Telephone -->
+            <div>
+              <label
+                for="telephone"
+                class="block text-sm font-medium text-gray-300 mb-2"
+              >
+                <i class="fas fa-phone mr-2"></i>Telephone *
+              </label>
+              <input
+                type="tel"
+                id="telephone"
+                th:field="*{telephone}"
+                required
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter 10-digit phone number"
+              />
+              <div
+                th:if="${#fields.hasErrors('telephone')}"
+                class="mt-1 text-red-400 text-sm"
+              >
+                <i class="fas fa-exclamation-triangle mr-1"></i>
+                <span th:errors="*{telephone}"></span>
+              </div>
+            </div>
+
+            <!-- User Type (Admin only, not for own profile) -->
+            <div
+              th:if="${!isOwnProfile and currentUser.type.name() == 'ADMIN'}"
+            >
+              <label
+                for="userType"
+                class="block text-sm font-medium text-gray-300 mb-2"
+              >
+                <i class="fas fa-user-tag mr-2"></i>User Type *
+              </label>
+              <select
+                id="userType"
+                name="userType"
+                required
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select user type</option>
+                <option
+                  th:each="type : ${userTypes}"
+                  th:value="${type}"
+                  th:text="${type.toString().toLowerCase()}"
+                  th:selected="${type == user.type}"
+                ></option>
+              </select>
+            </div>
+
+            <!-- Current User Type (Read-only for staff and own profile) -->
+            <div th:if="${isOwnProfile or currentUser.type.name() == 'STAFF'}">
+              <label class="block text-sm font-medium text-gray-300 mb-2">
+                <i class="fas fa-user-tag mr-2"></i>User Type
+              </label>
+              <input
+                type="text"
+                th:value="${user.type.toString().toLowerCase()}"
+                readonly
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-400 cursor-not-allowed"
+              />
+              <p class="mt-1 text-xs text-gray-500" th:if="${isOwnProfile}">
+                You cannot change your own user type
+              </p>
+              <p
+                class="mt-1 text-xs text-gray-500"
+                th:if="${currentUser.type.name() == 'STAFF'}"
+              >
+                Staff cannot change user types
+              </p>
+            </div>
+
+            <!-- Submit Button -->
+            <div
+              class="flex justify-end space-x-4 pt-6 border-t border-gray-700"
+            >
+              <!-- Cancel button for own profile -->
+              <a
+                th:if="${isOwnProfile and currentUser.type.name() == 'ADMIN'}"
+                href="/admin/dashboard"
+                class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition duration-200"
+              >
+                <i class="fas fa-times mr-2"></i>Cancel
+              </a>
+
+              <a
+                th:if="${isOwnProfile and currentUser.type.name() == 'STAFF'}"
+                href="/staff/dashboard"
+                class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition duration-200"
+              >
+                <i class="fas fa-times mr-2"></i>Cancel
+              </a>
+
+              <a
+                th:if="${isOwnProfile and currentUser.type.name() == 'CUSTOMER'}"
+                href="/customer/dashboard"
+                class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition duration-200"
+              >
+                <i class="fas fa-times mr-2"></i>Cancel
+              </a>
+
+              <!-- Cancel button for editing others -->
+              <a
+                th:if="${!isOwnProfile and currentUser.type.name() == 'ADMIN'}"
+                href="/users/admin/customers"
+                class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition duration-200"
+              >
+                <i class="fas fa-times mr-2"></i>Cancel
+              </a>
+
+              <a
+                th:if="${!isOwnProfile and currentUser.type.name() == 'STAFF'}"
+                href="/users/staff/customers"
+                class="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition duration-200"
+              >
+                <i class="fas fa-times mr-2"></i>Cancel
+              </a>
+
+              <button
+                type="submit"
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200"
+              >
+                <i class="fas fa-save mr-2"></i>
+                <span
+                  th:text="${isOwnProfile} ? 'Update Profile' : 'Update User'"
+                  >Update</span
+                >
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
