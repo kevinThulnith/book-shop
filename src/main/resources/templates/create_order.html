@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Order</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <nav class="bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <i class="fas fa-plus-circle text-blue-400 text-xl mr-2"></i>
+            <span class="text-white font-semibold text-lg">Create Order</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a th:href="@{/orders}" class="text-gray-300 hover:text-white transition duration-200">All Orders</a>
+            <a th:href="@{/}" class="text-gray-300 hover:text-white transition duration-200">Dashboard</a>
+            <a th:href="@{/logout}" class="text-gray-300 hover:text-white transition duration-200 flex items-center">
+              <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mx-auto mt-10">
+        <form th:action="@{/orders}" method="post">
+            <div class="bg-gray-800 shadow-md rounded p-6">
+                <div class="mb-4">
+                    <label for="customer" class="block text-gray-300 text-sm font-bold mb-2">Customer</label>
+                    <select id="customer" name="customerId" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option th:each="customer : ${customers}" th:value="${customer.accountNumber}" th:text="${customer.name}"></option>
+                    </select>
+                </div>
+
+                <h2 class="text-2xl font-bold text-white mb-4">Items</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div th:each="item : ${items}" class="bg-gray-700 p-4 rounded-lg">
+                        <h3 class="text-white font-semibold" th:text="${item.name}"></h3>
+                        <p class="text-gray-400" th:text="${item.description}"></p>
+                        <p class="text-gray-300" th:text="${'S' + #numbers.formatDecimal(item.price, 1, 2)}"></p>
+                        <div class="mt-2">
+                            <label th:for="${'item-' + item.itemCode}" class="text-gray-300 text-sm">Quantity</label>
+                            <input type="number" th:id="${'item-' + item.itemCode}" th:name="${'items[' + item.itemCode + ']'}" min="0" value="0" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Create Order
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
