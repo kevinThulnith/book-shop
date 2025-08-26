@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Item Management - Staff</title>
+    <link rel="icon" th:href="@{/images/logo.png}" type="image/png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -53,7 +54,7 @@
               th:href="@{/logout}"
               class="text-gray-300 hover:text-white transition duration-200 flex items-center"
             >
-              <i class="fas fa-sign-out-alt mr-1"></i> Logout
+              Logout
             </a>
           </div>
         </div>
@@ -168,12 +169,18 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
-                    th:class="${item.status == T(com.springboot.project.entity.Item$ItemStatus).ACTIVE ? 'bg-green-100 text-green-800' : 
-                                               item.status == T(com.springboot.project.entity.Item$ItemStatus).OUT_OF_STOCK ? 'bg-red-100 text-red-800' : 
-                                               'bg-gray-100 text-gray-800'}"
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                    th:text="${item.status}"
-                  ></span>
+                    th:class="${item.status == T(com.springboot.project.entity.Item$ItemStatus).ACTIVE ? 'bg-green-100 text-green-800 rounded-full px-2 py-1' : 
+                                               item.status == T(com.springboot.project.entity.Item$ItemStatus).OUT_OF_STOCK ? 'bg-red-100 text-red-800 rounded-full px-2 py-1' : 
+                                               'bg-blue-100 text-blue-800 rounded-full px-2 py-1'}"
+                    class="inline-flex items-center text-xs font-medium"
+                  >
+                    <i
+                      th:class="${item.status == T(com.springboot.project.entity.Item$ItemStatus).ACTIVE ? 'fas fa-check-circle mr-1' : 
+                                  item.status == T(com.springboot.project.entity.Item$ItemStatus).OUT_OF_STOCK ? 'fas fa-times-circle mr-1' : 
+                                  'fas fa-info-circle mr-1'}"
+                    ></i>
+                    <span th:text="${item.status}"></span>
+                  </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <form

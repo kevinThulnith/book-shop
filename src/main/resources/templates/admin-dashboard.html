@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
+    <title>Pahana Edu - Admin Dashboard</title>
+    <link rel="icon" th:href="@{/images/logo.png}" type="image/png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -45,7 +46,7 @@
               th:href="@{/logout}"
               class="text-gray-300 hover:text-white transition duration-200 flex items-center"
             >
-              <i class="fas fa-sign-out-alt mr-1"></i> Logout
+              Logout
             </a>
           </div>
         </div>
@@ -199,17 +200,18 @@
                     </p>
                   </div>
                 </a>
-                <div
+                <a
+                  href="/help"
                   class="bg-gradient-to-br from-yellow-600 to-orange-600 rounded-lg p-6 text-white transform hover:scale-105 transition duration-200 cursor-pointer shadow-lg"
                 >
                   <div class="text-center">
-                    <i class="fas fa-chart-bar text-4xl mb-4 opacity-80"></i>
-                    <h5 class="text-lg font-semibold mb-2">Reports</h5>
-                    <p class="text-yellow-100 text-sm">
-                      Generate system reports and analytics
-                    </p>
+                    <i
+                      class="fas fa-question-circle text-4xl mb-4 opacity-80"
+                    ></i>
+                    <h5 class="text-lg font-semibold mb-2">Help & Support</h5>
+                    <p class="text-yellow-100 text-sm">Get help and support</p>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>

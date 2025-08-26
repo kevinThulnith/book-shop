@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${item.name} + ' - Item Details'">Item Details</title>
+    <link rel="icon" th:href="@{/images/logo.png}" type="image/png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -43,6 +44,12 @@
             >
               <i class="fas fa-arrow-left mr-1"></i> Back to Items
             </a>
+            <a
+              href="/cart"
+              class="text-gray-300 hover:text-white transition duration-200"
+            >
+              <i class="fas fa-shopping-cart mr-1"></i> Cart
+            </a>
             <span class="text-gray-300"
               >Welcome,
               <span class="text-white font-medium" th:text="${user.name}"></span
@@ -51,7 +58,7 @@
               th:href="@{/logout}"
               class="text-gray-300 hover:text-white transition duration-200 flex items-center"
             >
-              <i class="fas fa-sign-out-alt mr-1"></i> Logout
+              Logout
             </a>
           </div>
         </div>
@@ -200,17 +207,88 @@
 
             <!-- Action Buttons -->
             <div class="mt-8 space-y-3">
-              <div th:if="${item.stockQuantity > 0}" class="text-center">
-                <button
-                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 text-lg"
+              <div th:if="${item.stockQuantity > 0}">
+                <!-- Add to Cart Form -->
+                <form
+                  th:action="@{/cart/add-from-details}"
+                  method="post"
+                  class="space-y-4"
                 >
-                  <i class="fas fa-shopping-cart mr-2"></i>
-                  Contact Us to Purchase
-                </button>
-                <p class="text-gray-400 text-sm mt-2">
-                  <i class="fas fa-info-circle mr-1"></i>
-                  Contact our sales team to place your order
-                </p>
+                  <input
+                    type="hidden"
+                    name="itemCode"
+                    th:value="${item.itemCode}"
+                  />
+
+                  <!-- Quantity Selector -->
+                  <div class="flex items-center justify-center space-x-4">
+                    <label class="text-gray-300 font-medium">Quantity:</label>
+                    <div class="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onclick="decreaseQuantity()"
+                        class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-lg flex items-center justify-center transition duration-200"
+                      >
+                        <i class="fas fa-minus text-xs"></i>
+                      </button>
+                      <input
+                        type="number"
+                        name="quantity"
+                        id="quantity"
+                        value="1"
+                        min="1"
+                        th:max="${item.stockQuantity}"
+                        class="w-20 text-center bg-gray-700 border border-gray-600 rounded-lg py-2 text-white focus:outline-none focus:border-blue-500"
+                      />
+                      <button
+                        type="button"
+                        onclick="increaseQuantity()"
+                        class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-lg flex items-center justify-center transition duration-200"
+                      >
+                        <i class="fas fa-plus text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Add to Cart Button -->
+                  <button
+                    type="submit"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 text-lg"
+                  >
+                    <i class="fas fa-cart-plus mr-2"></i>
+                    Add to Cart
+                  </button>
+                </form>
+
+                <!-- Quick Add Buttons -->
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                  <a
+                    href="/cart"
+                    class="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 text-center"
+                  >
+                    <i class="fas fa-shopping-cart mr-2"></i>
+                    View Cart
+                  </a>
+                  <form
+                    th:action="@{/cart/add-from-details}"
+                    method="post"
+                    class="inline"
+                  >
+                    <input
+                      type="hidden"
+                      name="itemCode"
+                      th:value="${item.itemCode}"
+                    />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button
+                      type="submit"
+                      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                    >
+                      <i class="fas fa-plus mr-2"></i>
+                      Quick Add
+                    </button>
+                  </form>
+                </div>
               </div>
 
               <div th:if="${item.stockQuantity == 0}" class="text-center">
@@ -264,5 +342,26 @@
         </div>
       </div>
     </div>
+
+    <script>
+      function increaseQuantity() {
+        const quantityInput = document.getElementById("quantity");
+        const maxQuantity = parseInt(quantityInput.getAttribute("max"));
+        const currentValue = parseInt(quantityInput.value);
+
+        if (currentValue < maxQuantity) {
+          quantityInput.value = currentValue + 1;
+        }
+      }
+
+      function decreaseQuantity() {
+        const quantityInput = document.getElementById("quantity");
+        const currentValue = parseInt(quantityInput.value);
+
+        if (currentValue > 1) {
+          quantityInput.value = currentValue - 1;
+        }
+      }
+    </script>
   </body>
 </html>

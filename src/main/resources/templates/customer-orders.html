@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Orders - Store Management</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-900 text-white">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 shadow-lg border-b border-gray-700">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <h1 class="text-xl font-bold text-white">Store Management</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-gray-300"
+              >Welcome, <span th:text="${user.name}"></span
+            ></span>
+            <a
+              href="/customer"
+              class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition duration-200"
+            >
+              <i class="fas fa-home mr-2"></i>Dashboard
+            </a>
+            <a
+              href="/logout"
+              class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white transition duration-200"
+            >
+              <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-6">
+        <h2 class="text-3xl font-bold text-white mb-2">
+          <i class="fas fa-file-invoice mr-3 text-purple-500"></i>My Orders
+        </h2>
+        <p class="text-gray-400">
+          View your order history and track order status
+        </p>
+      </div>
+
+      <!-- Orders List -->
+      <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(orders)}" class="text-center py-12">
+          <i class="fas fa-file-invoice text-6xl text-gray-600 mb-4"></i>
+          <h3 class="text-xl text-gray-400 mb-2">No orders found</h3>
+          <p class="text-gray-500 mb-6">You haven't placed any orders yet</p>
+          <a
+            href="/items/customer"
+            class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg text-white transition duration-200 inline-block"
+          >
+            <i class="fas fa-shopping-bag mr-2"></i>Start Shopping
+          </a>
+        </div>
+
+        <!-- Orders Table -->
+        <div th:if="${!#lists.isEmpty(orders)}">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-700">
+                <tr>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Order #
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Date
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Items
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Total
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-6 py-4 text-left text-sm font-medium text-gray-300 uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-700">
+                <tr
+                  th:each="order : ${orders}"
+                  class="hover:bg-gray-700 transition duration-200"
+                >
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div
+                      class="text-sm font-medium text-white"
+                      th:text="${order.billNumber}"
+                    ></div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div
+                      class="text-sm text-gray-300"
+                      th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"
+                    ></div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-gray-300">
+                      <span th:text="${#lists.size(order.billItems)}">0</span>
+                      items
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-semibold text-green-400">
+                      $<span
+                        th:text="${#numbers.formatDecimal(order.finalAmount, 1, 2)}"
+                        >0.00</span
+                      >
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      th:classappend="${order.status.name() == 'DRAFT'} ? 'bg-yellow-600' : (${order.status.name() == 'CONFIRMED'} ? 'bg-blue-600' : (${order.status.name() == 'PAID'} ? 'bg-green-600' : 'bg-red-600'))"
+                      class="px-2 py-1 text-xs font-semibold rounded-full text-white"
+                      th:text="${order.status.name()}"
+                    ></span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <a
+                      th:href="@{/customer/orders/{orderId}(orderId=${order.billNumber})}"
+                      class="text-blue-400 hover:text-blue-300 mr-3"
+                      title="View Details"
+                    >
+                      <i class="fas fa-eye"></i> View
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Summary Stats -->
+          <div class="bg-gray-700 px-6 py-4 border-t border-gray-600">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-gray-300">
+                Total Orders:
+                <span
+                  class="font-semibold text-white"
+                  th:text="${#lists.size(orders)}"
+                  >0</span
+                >
+              </span>
+              <span class="text-gray-300">
+                Total Spent:
+                <span class="font-semibold text-green-400">
+                  $<span
+                    th:text="${#numbers.formatDecimal(#aggregates.sum(orders.![finalAmount]), 1, 2)}"
+                    >0.00</span
+                  >
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-6 flex space-x-4">
+        <a
+          href="/customer"
+          class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white transition duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+        </a>
+        <a
+          href="/items/customer"
+          class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition duration-200"
+        >
+          <i class="fas fa-shopping-bag mr-2"></i>Continue Shopping
+        </a>
+        <a
+          href="/cart"
+          class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg text-white transition duration-200"
+        >
+          <i class="fas fa-shopping-cart mr-2"></i>View Cart
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

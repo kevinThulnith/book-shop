@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  class="dark"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pahana Edu - Help & Support</title>
+    <link rel="icon" th:href="@{/images/logo.png}" type="image/png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-900 min-h-screen">
+    <nav class="bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <i class="fas fa-question-circle text-blue-400 text-xl mr-2"></i>
+            <span class="text-white font-semibold text-lg">Help & Support</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a
+              href="javascript:history.back();"
+              class="text-gray-300 hover:text-white transition duration-200"
+            >
+              Dashboard
+            </a>
+            <a
+              th:href="@{/logout}"
+              class="text-gray-300 hover:text-white transition duration-200 flex items-center"
+            >
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mx-auto mt-10 p-4">
+      <h1 class="text-4xl font-bold text-white mb-6">Help Center</h1>
+
+      <!-- Admin Help Section -->
+      <div th:if="${user.type.name() == 'ADMIN'}" class="mb-8">
+        <h2 class="text-2xl font-semibold text-blue-400 mb-4">Admin Help</h2>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <p class="text-gray-300">
+            As an Admin, you have full control over the system. You can manage
+            users, items, and view all orders.
+          </p>
+          <ul class="list-disc list-inside mt-4 text-gray-400">
+            <li>
+              <strong>User Management:</strong> Add, edit, and delete users of
+              all types (Admin, Staff, Customer). You have full control over
+              each user's account details.
+            </li>
+            <li>
+              <strong>Item Management:</strong> Add, edit, and delete items in
+              the inventory. You have full control over the product catalog
+              including pricing, descriptions, and availability.
+            </li>
+            <li>
+              <strong>Order Management:</strong> View all orders placed by
+              customers and create new orders on behalf of any customer in the
+              system.
+            </li>
+            <li>
+              <strong>System Administration:</strong> Access to all system
+              settings and configurations.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Staff Help Section -->
+      <div th:if="${user.type.name() == 'STAFF'}" class="mb-8">
+        <h2 class="text-2xl font-semibold text-green-400 mb-4">Staff Help</h2>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <p class="text-gray-300">
+            As a Staff member, you can manage orders and inventory.
+          </p>
+          <ul class="list-disc list-inside mt-4 text-gray-400">
+            <li>
+              <strong>Customer Management:</strong> Edit customer details and
+              assist them with their accounts.
+            </li>
+            <li>
+              <strong>Order Management:</strong> View all orders and create new
+              orders by selecting specific customers from the system.
+            </li>
+            <li>
+              <strong>Inventory Management:</strong> Update the stock quantity
+              and details of items in the inventory.
+            </li>
+            <li>
+              <strong>Profile Management:</strong> Update your own staff profile
+              and account settings.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Customer Help Section -->
+      <div th:if="${user.type.name() == 'CUSTOMER'}" class="mb-8">
+        <h2 class="text-2xl font-semibold text-purple-400 mb-4">
+          Customer Help
+        </h2>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <p class="text-gray-300">
+            As a Customer, you can browse items, manage your shopping cart, and
+            place orders.
+          </p>
+          <ul class="list-disc list-inside mt-4 text-gray-400">
+            <li>
+              <strong>Shopping:</strong> Browse all available items in the
+              catalog with detailed information about each product.
+            </li>
+            <li>
+              <strong>Shopping Cart:</strong> Add items to your cart, adjust
+              quantities, and proceed to checkout when ready.
+            </li>
+            <li>
+              <strong>Purchasing:</strong> Complete the checkout process to buy
+              items in your cart using various payment methods.
+            </li>
+            <li>
+              <strong>My Orders:</strong> View your past orders, track their
+              status, and review order history.
+            </li>
+            <li>
+              <strong>Profile Management:</strong> Edit your personal
+              information, shipping addresses, and account settings.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

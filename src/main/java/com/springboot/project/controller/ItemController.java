@@ -1,22 +1,20 @@
 package com.springboot.project.controller;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import com.springboot.project.service.ItemService;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
 import com.springboot.project.entity.Item;
 import com.springboot.project.entity.User;
-import com.springboot.project.service.ItemService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import jakarta.servlet.http.HttpSession;
+import org.springframework.ui.Model;
 import jakarta.validation.Valid;
-
-import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.List;
 
 @Controller
 @RequestMapping("/items")
@@ -26,7 +24,6 @@ public class ItemController {
     private ItemService itemService;
 
     // ADMIN ROUTES - Full CRUD operations
-
     @GetMapping("/admin")
     public String adminItemList(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("user");
@@ -133,7 +130,6 @@ public class ItemController {
     }
 
     // STAFF ROUTES - List all and update quantity only
-
     @GetMapping("/staff")
     public String staffItemList(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("user");
@@ -167,7 +163,6 @@ public class ItemController {
     }
 
     // CUSTOMER ROUTES - View list and item details
-
     @GetMapping("/customer")
     public String customerItemList(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("user");

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pahana Edu - Create Order</title>
+    <link rel="icon" th:href="@{/images/logo.png}" type="image/png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#eff6ff",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-900 min-h-screen">
+    <nav class="bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <i class="fas fa-plus-circle text-blue-400 text-xl mr-2"></i>
+            <span class="text-white font-semibold text-lg"
+              >Create New Order</span
+            >
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-gray-300"
+              >Welcome,
+              <span class="text-white font-medium" th:text="${user.name}"></span
+            ></span>
+            <a
+              th:href="@{/orders}"
+              class="text-gray-300 hover:text-white transition duration-200"
+            >
+              Back to Orders
+            </a>
+            <a
+              th:href="@{/logout}"
+              class="text-gray-300 hover:text-white transition duration-200 flex items-center"
+            >
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <!-- Success/Error Messages -->
+      <div
+        th:if="${successMessage}"
+        class="mb-6 bg-green-600 text-white p-4 rounded-lg"
+      >
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div
+        th:if="${errorMessage}"
+        class="mb-6 bg-red-600 text-white p-4 rounded-lg"
+      >
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white">Create New Order</h1>
+        <p class="text-gray-400 mt-2">
+          Select a customer to create a new order
+        </p>
+      </div>
+
+      <!-- Create Order Form -->
+      <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+        <form
+          th:action="@{/orders/create-with-items}"
+          method="post"
+          class="space-y-6"
+          id="orderForm"
+        >
+          <!-- Customer Selection -->
+          <div>
+            <label
+              for="customerId"
+              class="block text-sm font-medium text-gray-300 mb-2"
+            >
+              Select Customer
+            </label>
+            <select
+              id="customerId"
+              name="customerId"
+              required
+              class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="">Choose a customer...</option>
+              <option
+                th:each="customer : ${customers}"
+                th:value="${customer.accountNumber}"
+                th:data-name="${customer.name}"
+                th:data-email="${customer.email}"
+                th:data-phone="${customer.telephone}"
+                th:data-address="${customer.address}"
+              >
+                <span
+                  th:text="${customer.name + ' (' + customer.email + ')'}"
+                ></span>
+              </option>
+            </select>
+          </div>
+
+          <!-- Customer Info Display -->
+          <div id="customerInfo" class="hidden bg-gray-700 p-4 rounded-lg">
+            <h3 class="text-lg font-medium text-white mb-2">
+              Selected Customer Information
+            </h3>
+            <div id="customerDetails" class="text-gray-300 space-y-1">
+              <!-- Customer details will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Item Selection Section -->
+          <div id="itemSection" class="hidden">
+            <h3 class="text-lg font-medium text-white mb-4">
+              Select Items for Order
+            </h3>
+
+            <!-- Available Items -->
+            <div class="space-y-4 max-h-96 overflow-y-auto">
+              <div
+                th:each="item : ${items}"
+                class="bg-gray-700 p-4 rounded-lg item-card"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="flex-1">
+                    <div class="flex items-center mb-2">
+                      <input
+                        type="checkbox"
+                        th:id="'item_' + ${item.itemCode}"
+                        th:value="${item.itemCode}"
+                        class="item-checkbox mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        th:data-price="${item.price}"
+                        th:data-stock="${item.stockQuantity}"
+                        th:data-name="${item.name}"
+                      />
+                      <label
+                        th:for="'item_' + ${item.itemCode}"
+                        class="font-medium text-white cursor-pointer"
+                      >
+                        <span th:text="${item.name}"></span>
+                      </label>
+                    </div>
+                    <p
+                      class="text-sm text-gray-400 mb-2"
+                      th:text="${item.description}"
+                    ></p>
+                    <div class="flex items-center space-x-4 text-sm">
+                      <span class="text-green-400">
+                        Price:
+                        <span
+                          th:text="${#numbers.formatDecimal(item.price, 1, 2)}"
+                        ></span>
+                      </span>
+                      <span class="text-blue-400">
+                        Stock: <span th:text="${item.stockQuantity}"></span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <label class="block text-sm text-gray-300 mb-1"
+                      >Quantity</label
+                    >
+                    <input
+                      type="number"
+                      th:name="'quantities[' + ${item.itemCode} + ']'"
+                      th:id="'qty_' + ${item.itemCode}"
+                      min="1"
+                      th:max="${item.stockQuantity}"
+                      value="1"
+                      disabled
+                      class="quantity-input w-20 px-2 py-1 bg-gray-600 border border-gray-500 rounded text-white text-sm focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                th:if="${#lists.isEmpty(items)}"
+                class="text-center text-gray-500 py-8"
+              >
+                <i class="fas fa-box text-4xl mb-2"></i>
+                <div class="text-lg">No items available</div>
+                <div class="text-sm">Please add items to inventory first</div>
+              </div>
+            </div>
+
+            <!-- Selected Items Summary -->
+            <div
+              id="selectedItemsSummary"
+              class="hidden mt-6 bg-gray-700 p-4 rounded-lg"
+            >
+              <h4 class="text-lg font-medium text-white mb-3">
+                Selected Items Summary
+              </h4>
+              <div id="summaryContent" class="space-y-2"></div>
+              <div class="mt-4 pt-4 border-t border-gray-600">
+                <div
+                  class="flex justify-between text-lg font-semibold text-white"
+                >
+                  <span>Total Amount:</span>
+                  <span id="totalAmount">0.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex justify-between items-center">
+            <a
+              th:href="@{/orders}"
+              class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition duration-200"
+            >
+              Cancel
+            </a>
+            <button
+              type="submit"
+              id="createOrderBtn"
+              disabled
+              class="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition duration-200 flex items-center"
+            >
+              <i class="fas fa-shopping-cart mr-2"></i>
+              Create Order with Items
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Customer List Preview -->
+      <div class="mt-8 bg-gray-800 rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold text-white mb-4">
+          Available Customers
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            th:each="customer : ${customers}"
+            class="bg-gray-700 p-4 rounded-lg"
+          >
+            <div
+              class="font-medium text-white"
+              th:text="${customer.name}"
+            ></div>
+            <div
+              class="text-sm text-gray-400"
+              th:text="${customer.email}"
+            ></div>
+            <div
+              class="text-sm text-gray-400"
+              th:text="${customer.telephone}"
+            ></div>
+            <div
+              class="text-sm text-gray-400"
+              th:text="${customer.address}"
+            ></div>
+          </div>
+          <div
+            th:if="${#lists.isEmpty(customers)}"
+            class="col-span-full text-center text-gray-500 py-8"
+          >
+            <i class="fas fa-users text-4xl mb-2"></i>
+            <div class="text-lg">No customers found</div>
+            <div class="text-sm">
+              Please add customers before creating orders
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Customer selection handler
+      document
+        .getElementById("customerId")
+        .addEventListener("change", function () {
+          const customerId = this.value;
+          const customerInfo = document.getElementById("customerInfo");
+          const customerDetails = document.getElementById("customerDetails");
+          const itemSection = document.getElementById("itemSection");
+
+          if (customerId) {
+            // Find the selected customer data
+            const selectedOption = this.options[this.selectedIndex];
+            const customerName = selectedOption.getAttribute("data-name");
+            const customerEmail = selectedOption.getAttribute("data-email");
+            const customerPhone = selectedOption.getAttribute("data-phone");
+            const customerAddress = selectedOption.getAttribute("data-address");
+
+            // Show customer info
+            customerInfo.classList.remove("hidden");
+            customerDetails.innerHTML = `
+              <div><strong>Name:</strong> ${customerName}</div>
+              <div><strong>Email:</strong> ${customerEmail}</div>
+              <div><strong>Phone:</strong> ${customerPhone}</div>
+              <div><strong>Address:</strong> ${customerAddress}</div>
+            `;
+
+            // Show item selection section
+            itemSection.classList.remove("hidden");
+          } else {
+            customerInfo.classList.add("hidden");
+            itemSection.classList.add("hidden");
+            resetForm();
+          }
+        });
+
+      // Handle item checkbox changes
+      document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("item-checkbox")) {
+          const itemId = e.target.value;
+          const quantityInput = document.getElementById("qty_" + itemId);
+          const isChecked = e.target.checked;
+
+          // Enable/disable quantity input
+          quantityInput.disabled = !isChecked;
+
+          if (!isChecked) {
+            quantityInput.value = 1;
+          }
+
+          updateSelectedItemsSummary();
+          updateCreateButton();
+        }
+      });
+
+      // Handle quantity input changes
+      document.addEventListener("input", function (e) {
+        if (e.target.classList.contains("quantity-input")) {
+          updateSelectedItemsSummary();
+        }
+      });
+
+      function updateSelectedItemsSummary() {
+        const checkboxes = document.querySelectorAll(".item-checkbox:checked");
+        const summaryDiv = document.getElementById("selectedItemsSummary");
+        const summaryContent = document.getElementById("summaryContent");
+        const totalAmountSpan = document.getElementById("totalAmount");
+
+        if (checkboxes.length === 0) {
+          summaryDiv.classList.add("hidden");
+          return;
+        }
+
+        summaryDiv.classList.remove("hidden");
+        let totalAmount = 0;
+        let summaryHTML = "";
+
+        checkboxes.forEach((checkbox) => {
+          const itemId = checkbox.value;
+          const itemName = checkbox.getAttribute("data-name");
+          const itemPrice = parseFloat(checkbox.getAttribute("data-price"));
+          const quantityInput = document.getElementById("qty_" + itemId);
+          const quantity = parseInt(quantityInput.value) || 1;
+          const itemTotal = itemPrice * quantity;
+
+          totalAmount += itemTotal;
+
+          summaryHTML += `
+            <div class="flex justify-between text-gray-300">
+              <span>${itemName} x ${quantity}</span>
+              <span>$${itemTotal.toFixed(2)}</span>
+            </div>
+          `;
+        });
+
+        summaryContent.innerHTML = summaryHTML;
+        totalAmountSpan.textContent = "$" + totalAmount.toFixed(2);
+      }
+
+      function updateCreateButton() {
+        const customerId = document.getElementById("customerId").value;
+        const checkedItems = document.querySelectorAll(
+          ".item-checkbox:checked"
+        );
+        const createBtn = document.getElementById("createOrderBtn");
+
+        createBtn.disabled = !customerId || checkedItems.length === 0;
+      }
+
+      function resetForm() {
+        // Uncheck all items
+        document.querySelectorAll(".item-checkbox").forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+
+        // Disable all quantity inputs
+        document.querySelectorAll(".quantity-input").forEach((input) => {
+          input.disabled = true;
+          input.value = 1;
+        });
+
+        // Hide summary
+        document.getElementById("selectedItemsSummary").classList.add("hidden");
+
+        // Disable create button
+        updateCreateButton();
+      }
+
+      // Form submission handler
+      document
+        .getElementById("orderForm")
+        .addEventListener("submit", function (e) {
+          const checkedItems = document.querySelectorAll(
+            ".item-checkbox:checked"
+          );
+
+          if (checkedItems.length === 0) {
+            e.preventDefault();
+            alert("Please select at least one item for the order.");
+            return;
+          }
+
+          // Add selected item IDs to form
+          checkedItems.forEach((checkbox) => {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "itemIds";
+            hiddenInput.value = checkbox.value;
+            this.appendChild(hiddenInput);
+          });
+        });
+    </script>
+  </body>
+</html>

@@ -1,75 +1,239 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
-<head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shopping Cart</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
+    <title>Shopping Cart - Store Management</title>
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
-</head>
-<body class="bg-gray-900 min-h-screen">
-    <nav class="bg-gray-800 border-b border-gray-700 shadow-lg">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-900 text-white">
+    <!-- Navigation -->
+    <nav class="bg-gray-800 shadow-lg border-b border-gray-700">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
-            <i class="fas fa-shopping-cart text-blue-400 text-xl mr-2"></i>
-            <span class="text-white font-semibold text-lg">Shopping Cart</span>
+            <h1 class="text-xl font-bold text-white">Store Management</h1>
           </div>
           <div class="flex items-center space-x-4">
-            <a th:href="@{/}" class="text-gray-300 hover:text-white transition duration-200">Continue Shopping</a>
-            <a th:href="@{/logout}" class="text-gray-300 hover:text-white transition duration-200 flex items-center">
-              <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            <span class="text-gray-300"
+              >Welcome, <span th:text="${user.name}"></span
+            ></span>
+            <a
+              href="/customer"
+              class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition duration-200"
+            >
+              <i class="fas fa-home mr-2"></i>Dashboard
+            </a>
+            <a
+              href="/logout"
+              class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white transition duration-200"
+            >
+              <i class="fas fa-sign-out-alt mr-2"></i>Logout
             </a>
           </div>
         </div>
       </div>
     </nav>
 
-    <div class="container mx-auto mt-10">
-        <div class="bg-gray-800 shadow-md rounded my-6">
-            <table class="min-w-full table-auto">
-                <thead>
-                    <tr class="bg-gray-700 text-gray-300 uppercase text-sm leading-normal">
-                        <th class="py-3 px-6 text-left">Product</th>
-                        <th class="py-3 px-6 text-left">Price</th>
-                        <th class="py-3 px-6 text-center">Quantity</th>
-                        <th class="py-3 px-6 text-right">Total</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-200 text-sm font-light">
-                    <tr th:each="cartItem : ${cartItems}" class="border-b border-gray-700 hover:bg-gray-600">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">
-                            <span th:text="${cartItem.item.name}"></span>
-                        </td>
-                        <td class="py-3 px-6 text-left">
-                            <span th:text="${'S' + #numbers.formatDecimal(cartItem.item.price, 1, 2)}"></span>
-                        </td>
-                        <td class="py-3 px-6 text-center">
-                            <span th:text="${cartItem.quantity}"></span>
-                        </td>
-                        <td class="py-3 px-6 text-right">
-                            <span th:text="${'S' + #numbers.formatDecimal(cartItem.item.price * cartItem.quantity, 1, 2)}"></span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-6">
+        <h2 class="text-3xl font-bold text-white mb-2">
+          <i class="fas fa-shopping-cart mr-3 text-yellow-500"></i>Shopping Cart
+        </h2>
+        <p class="text-gray-400">
+          Manage your cart items and proceed to checkout
+        </p>
+      </div>
+
+      <!-- Flash Messages -->
+      <div th:if="${successMessage}" class="mb-6">
+        <div class="bg-green-600 text-white px-4 py-3 rounded-lg shadow">
+          <i class="fas fa-check-circle mr-2"></i>
+          <span th:text="${successMessage}"></span>
+        </div>
+      </div>
+
+      <div th:if="${errorMessage}" class="mb-6">
+        <div class="bg-red-600 text-white px-4 py-3 rounded-lg shadow">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <span th:text="${errorMessage}"></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2">
+          <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold text-white mb-4">
+              Cart Items (<span th:text="${cart.totalItems}">0</span>)
+            </h3>
+
+            <!-- Empty Cart Message -->
+            <div th:if="${cart.empty}" class="text-center py-12">
+              <i class="fas fa-shopping-cart text-6xl text-gray-600 mb-4"></i>
+              <h4 class="text-xl text-gray-400 mb-2">Your cart is empty</h4>
+              <p class="text-gray-500 mb-6">Add some items to get started</p>
+              <a
+                href="/items/customer"
+                class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg text-white transition duration-200 inline-block"
+              >
+                <i class="fas fa-shopping-bag mr-2"></i>Browse Items
+              </a>
+            </div>
+
+            <!-- Cart Items List -->
+            <div th:if="${!cart.empty}" class="space-y-4">
+              <div
+                th:each="cartItem : ${cart.cartItems}"
+                class="bg-gray-700 rounded-lg p-4 flex items-center space-x-4"
+              >
+                <div class="flex-1">
+                  <h4
+                    class="text-lg font-medium text-white"
+                    th:text="${cartItem.item.name}"
+                  ></h4>
+                  <p
+                    class="text-gray-400 text-sm"
+                    th:text="${cartItem.item.description}"
+                  ></p>
+                  <p class="text-green-400 font-semibold mt-1">
+                    $<span
+                      th:text="${#numbers.formatDecimal(cartItem.unitPrice, 1, 2)}"
+                    ></span>
+                    each
+                  </p>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                  <!-- Quantity Update Form -->
+                  <form
+                    th:action="@{/cart/update/{cartItemId}(cartItemId=${cartItem.id})}"
+                    method="post"
+                    class="flex items-center space-x-2"
+                  >
+                    <label class="text-sm text-gray-300">Qty:</label>
+                    <input
+                      type="number"
+                      name="quantity"
+                      th:value="${cartItem.quantity}"
+                      min="1"
+                      th:max="${cartItem.item.stockQuantity}"
+                      class="w-20 px-3 py-1 bg-gray-600 border border-gray-500 rounded text-white text-center"
+                      onchange="this.form.submit()"
+                    />
+                  </form>
+
+                  <!-- Item Total -->
+                  <div class="text-right min-w-[80px]">
+                    <div class="text-lg font-semibold text-white">
+                      $<span
+                        th:text="${#numbers.formatDecimal(cartItem.totalPrice, 1, 2)}"
+                      ></span>
+                    </div>
+                  </div>
+
+                  <!-- Remove Button -->
+                  <form
+                    th:action="@{/cart/remove/{cartItemId}(cartItemId=${cartItem.id})}"
+                    method="post"
+                    class="inline"
+                  >
+                    <button
+                      type="submit"
+                      class="text-red-400 hover:text-red-300 p-2"
+                      title="Remove item"
+                      onclick="return confirm('Are you sure you want to remove this item?')"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cart Actions -->
+            <div th:if="${!cart.empty}" class="mt-6 flex space-x-4">
+              <form action="/cart/clear" method="post" class="inline">
+                <button
+                  type="submit"
+                  class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-lg text-white transition duration-200"
+                  onclick="return confirm('Are you sure you want to clear your cart?')"
+                >
+                  <i class="fas fa-trash mr-2"></i>Clear Cart
+                </button>
+              </form>
+              <a
+                href="/items/customer"
+                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition duration-200 inline-block"
+              >
+                <i class="fas fa-plus mr-2"></i>Add More Items
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div class="flex justify-end mt-6">
-            <form th:action="@{/cart/order}" method="post">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Place Order
-                </button>
+        <!-- Cart Summary -->
+        <div>
+          <div class="bg-gray-800 rounded-lg shadow-lg p-6 sticky top-4">
+            <h3 class="text-xl font-semibold text-white mb-4">Order Summary</h3>
+
+            <div class="space-y-3 mb-6">
+              <div class="flex justify-between text-gray-300">
+                <span
+                  >Items (<span th:text="${cart.totalItems}">0</span>):</span
+                >
+                <span
+                  >$<span
+                    th:text="${#numbers.formatDecimal(cart.totalAmount, 1, 2)}"
+                    >0.00</span
+                  ></span
+                >
+              </div>
+              <div class="flex justify-between text-gray-300">
+                <span>Shipping:</span>
+                <span>Free</span>
+              </div>
+              <div class="flex justify-between text-gray-300">
+                <span>Tax:</span>
+                <span>$0.00</span>
+              </div>
+              <hr class="border-gray-600" />
+              <div class="flex justify-between text-xl font-bold text-white">
+                <span>Total:</span>
+                <span
+                  >$<span
+                    th:text="${#numbers.formatDecimal(cart.totalAmount, 1, 2)}"
+                    >0.00</span
+                  ></span
+                >
+              </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <form th:if="${!cart.empty}" action="/cart/checkout" method="post">
+              <button
+                type="submit"
+                class="w-full bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold transition duration-200"
+              >
+                <i class="fas fa-credit-card mr-2"></i>Proceed to Checkout
+              </button>
             </form>
+
+            <div th:if="${cart.empty}" class="text-gray-500 text-center">
+              <p>Add items to proceed to checkout</p>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

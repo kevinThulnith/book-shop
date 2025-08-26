@@ -4,6 +4,7 @@ import jakarta.validation.constraints.DecimalMin;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 
@@ -24,16 +25,16 @@ public class Bill {
     private User customer;
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BillItem> billItems;
+    private List<BillItem> billItems = new ArrayList<>();
 
     @Column(name = "total_amount", precision = 10, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Tax amount must be greater than or equal to 0")
     @Column(name = "tax_amount", precision = 10, scale = 2)
     private BigDecimal taxAmount = BigDecimal.ZERO;
 
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Discount amount must be greater than or equal to 0")
     @Column(name = "discount_amount", precision = 10, scale = 2)
     private BigDecimal discountAmount = BigDecimal.ZERO;
 

@@ -17,6 +17,11 @@ import jakarta.validation.Valid;
 public class AuthController {
     @Autowired
     private UserService userService;
+
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/login";
+    }
     
     // Login page
     @GetMapping("/login")
@@ -118,9 +123,4 @@ public class AuthController {
         return "customer-dashboard";
     }
     
-    // Home page redirect
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/login";
-    }
 }
