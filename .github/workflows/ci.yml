@@ -30,6 +30,11 @@ jobs:
       - name: Make mvnw executable
         run: chmod +x ./mvnw
 
+      - name: Setup test environment
+        run: |
+          mkdir -p data
+          touch data/project_data.db
+
       - name: Run tests
         run: ./mvnw clean test
 
